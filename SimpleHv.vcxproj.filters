@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <!-- ========================================
+         Root Filters
+         ======================================== -->
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <!-- ========================================
+         Code Filters (hyperhv style)
+         ======================================== -->
+    <Filter Include="Source Files\vmm">
+      <UniqueIdentifier>{8E2A1F3B-4D5C-4E7F-9A1B-2C3D4E5F6A7B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vmm\vmx">
+      <UniqueIdentifier>{9F3B2E4D-5C6A-4F8E-A1C2-3D4E5F6A7B8C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vmm\ept">
+      <UniqueIdentifier>{A4D5E6F7-8A9B-4C1D-B2E3-F4A5B6C7D8E9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assembly">
+      <UniqueIdentifier>{B5E6F7A8-9B0C-4D1E-C2F3-A4B5C6D7E8F9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\interface">
+      <UniqueIdentifier>{C6F7A8B9-0C1D-4E2F-D3A4-B5C6D7E8F9A0}</UniqueIdentifier>
+    </Filter>
+    <!-- ========================================
+         Code Filters (hyperevade style)
+         ======================================== -->
+    <Filter Include="Source Files\transparency">
+      <UniqueIdentifier>{D7A8B9C0-1D2E-4F3A-E4B5-C6D7E8F9A0B1}</UniqueIdentifier>
+    </Filter>
+    <!-- ========================================
+         Header Filters (hyperhv style)
+         ======================================== -->
+    <Filter Include="Header Files\common">
+      <UniqueIdentifier>{E8B9C0D1-2E3F-4A5B-F6C7-D8E9F0A1B2C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\vmm">
+      <UniqueIdentifier>{F9C0D1E2-3F4A-4B5C-A6D7-E8F9A0B1C2D3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\vmm\vmx">
+      <UniqueIdentifier>{A0D1E2F3-4A5B-4C6D-B7E8-F9A0B1C2D3E4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\vmm\ept">
+      <UniqueIdentifier>{B1E2F3A4-5B6C-4D7E-C8F9-A0B1C2D3E4F5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\interface">
+      <UniqueIdentifier>{C2F3A4B5-6C7D-4E8F-D9A0-B1C2D3E4F5A6}</UniqueIdentifier>
+    </Filter>
+    <!-- ========================================
+         Header Filters (hyperevade style)
+         ======================================== -->
+    <Filter Include="Header Files\transparency">
+      <UniqueIdentifier>{D3A4B5C6-7D8E-4F9A-E0B1-C2D3E4F5A6B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{fe4ccbf0-1bf5-4b39-a574-38bbb6be0b73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\globals">
+      <UniqueIdentifier>{8d2ffcf2-b675-4061-bd65-13923149b2e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\globals">
+      <UniqueIdentifier>{99354b90-13e3-4d17-91e8-189af5e17088}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hooks">
+      <UniqueIdentifier>{e22ca812-9ba0-4b86-8f15-2b572b232386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hooks">
+      <UniqueIdentifier>{d81175ad-42cb-48e8-95f6-c982a46dd5d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hooks\ept-hook">
+      <UniqueIdentifier>{0a30895c-e0d1-454d-b820-faa2a1fb2c0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hooks\syscall-hook">
+      <UniqueIdentifier>{b75f0f24-ec87-4de0-973f-2d435f3a4555}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\features">
+      <UniqueIdentifier>{95df3179-2f74-45b7-bbe3-7004287bcd3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\features">
+      <UniqueIdentifier>{4d6b2a09-daa9-4e6d-b747-9f81fec2f712}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\assembly">
+      <UniqueIdentifier>{fe05cdf8-5054-435e-a09a-a9cd3fb437e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\broadcast">
+      <UniqueIdentifier>{7a6eedb0-a7e7-406a-a75f-88fe9768a241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\components">
+      <UniqueIdentifier>{1e1794e6-65e0-482a-861b-6c045bcc36a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\devices">
+      <UniqueIdentifier>{7effb26c-7f3d-431c-b9f3-5db45ab871c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\disassembler">
+      <UniqueIdentifier>{90d0bcd5-bd0e-4fd4-a409-aab972dded5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\macros">
+      <UniqueIdentifier>{264e00ef-cafe-4655-888f-667983ae8514}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\memory">
+      <UniqueIdentifier>{8f621bb3-c439-4978-89aa-3267da1ace46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mmio">
+      <UniqueIdentifier>{0a0efeca-22ac-4a36-845e-22badcc01d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\platform">
+      <UniqueIdentifier>{976cce50-332d-4dde-a2a7-715d6dfd6c58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\processor">
+      <UniqueIdentifier>{cb01edbf-e9b7-4f80-96b6-aba9621b6e7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\broadcast">
+      <UniqueIdentifier>{1d2a6a51-f55a-4b37-8ec5-789b0554b4a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\components">
+      <UniqueIdentifier>{491e06b3-ab3e-4c56-8bb1-0420070772a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\components\optimizations">
+      <UniqueIdentifier>{e6028107-2cde-4d4c-90d4-f3504d6674bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\components\registers">
+      <UniqueIdentifier>{00a63053-4407-431b-9f6e-8624e8f9a0ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\components\spinlock">
+      <UniqueIdentifier>{6408c32c-8b9b-452f-96d1-83c516f0a73f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\devices">
+      <UniqueIdentifier>{b21c20d1-40b1-4dd5-b3a8-3217029d7224}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\disassembler">
+      <UniqueIdentifier>{ff4ff140-73a6-479c-abb6-2a3c036a75c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\memory">
+      <UniqueIdentifier>{99fb7938-49f6-4a32-82f6-a8a65735cc5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mmio">
+      <UniqueIdentifier>{361f195e-30a3-42b9-86c1-37bd30593e86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\platform">
+      <UniqueIdentifier>{555db011-6c95-4140-ad35-1f51f1ed063b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\processor">
+      <UniqueIdentifier>{9b605cf6-49b4-4a32-9134-8714fea7e2ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\components\optimizations">
+      <UniqueIdentifier>{764b48e4-2732-4404-9ca9-5579f67bad96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\components\spinlock">
+      <UniqueIdentifier>{abf42d5f-f544-4061-b360-8c1863b9512e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SDK">
+      <UniqueIdentifier>{75f0dd67-9f14-434f-abc9-e7b877825a2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SDK\modules">
+      <UniqueIdentifier>{2cff9f7e-9fa2-459a-8483-53f3260e0513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SDK\imports">
+      <UniqueIdentifier>{a99fd86a-dff4-4329-b49a-7253ba660f69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SDK\headers">
+      <UniqueIdentifier>{b593c2d0-0dce-42ea-99fd-97d38e329418}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <!-- ========================================
+       Header Files Mapping
+       ======================================== -->
+  <ItemGroup>
+    <ClInclude Include="header\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\common\Common.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="header\common\State.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\Vmx.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\Hv.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\Vmexit.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\VmxRegions.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\ept\Ept.h">
+      <Filter>Header Files\vmm\ept</Filter>
+    </ClInclude>
+    <ClInclude Include="header\transparency\Transparency.h">
+      <Filter>Header Files\transparency</Filter>
+    </ClInclude>
+    <ClInclude Include="header\globals\GlobalVariableManagement.h">
+      <Filter>Header Files\globals</Filter>
+    </ClInclude>
+    <ClInclude Include="header\globals\GlobalVariables.h">
+      <Filter>Header Files\globals</Filter>
+    </ClInclude>
+    <ClInclude Include="header\hooks\ExecTrap.h">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="header\hooks\Hooks.h">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="header\hooks\ModeBasedExecHook.h">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="header\hooks\SyscallCallback.h">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="header\features\CompatibilityChecks.h">
+      <Filter>Header Files\features</Filter>
+    </ClInclude>
+    <ClInclude Include="header\features\DirtyLogging.h">
+      <Filter>Header Files\features</Filter>
+    </ClInclude>
+    <ClInclude Include="header\interface\Callback.h">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="header\interface\DirectVmcall.h">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="header\interface\Dispatch.h">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="header\broadcast\Broadcast.h">
+      <Filter>Header Files\broadcast</Filter>
+    </ClInclude>
+    <ClInclude Include="header\broadcast\DpcRoutines.h">
+      <Filter>Header Files\broadcast</Filter>
+    </ClInclude>
+    <ClInclude Include="header\assembly\InlineAsm.h">
+      <Filter>Header Files\assembly</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\optimizations\header\AvlTree.h">
+      <Filter>Header Files\components\optimizations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\optimizations\header\BinarySearch.h">
+      <Filter>Header Files\components\optimizations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\optimizations\header\InsertionSort.h">
+      <Filter>Header Files\components\optimizations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\optimizations\header\OptimizationsExamples.h">
+      <Filter>Header Files\components\optimizations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\components\spinlock\header\Spinlock.h">
+      <Filter>Header Files\components\spinlock</Filter>
+    </ClInclude>
+    <ClInclude Include="header\devices\Apic.h">
+      <Filter>Header Files\devices</Filter>
+    </ClInclude>
+    <ClInclude Include="header\devices\Pci.h">
+      <Filter>Header Files\devices</Filter>
+    </ClInclude>
+    <ClInclude Include="header\disassembler\Disassembler.h">
+      <Filter>Header Files\disassembler</Filter>
+    </ClInclude>
+    <ClInclude Include="include\macros\MetaMacros.h">
+      <Filter>Header Files\macros</Filter>
+    </ClInclude>
+    <ClInclude Include="header\memory\AddressCheck.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="header\memory\Conversion.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="header\memory\Layout.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="header\memory\MemoryMapper.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="header\memory\PoolManager.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="header\memory\Segmentation.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="header\memory\SwitchLayout.h">
+      <Filter>Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="header\mmio\MmioShadowing.h">
+      <Filter>Header Files\mmio</Filter>
+    </ClInclude>
+    <ClInclude Include="header\processor\Idt.h">
+      <Filter>Header Files\processor</Filter>
+    </ClInclude>
+    <ClInclude Include="header\processor\Smm.h">
+      <Filter>Header Files\processor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\platform\kernel\header\Environment.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\platform\kernel\header\Mem.h">
+      <Filter>Header Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\HyperDbgSdk.h">
+      <Filter>Header Files\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\Assertions.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\BasicTypes.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\Connection.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\Constants.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\DataTypes.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\ErrorCodes.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\Events.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\HardwareDebugger.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\Ioctls.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\Pcie.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\RequestStructures.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\ScriptEngineCommonDefinitions.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\headers\Symbols.h">
+      <Filter>Header Files\SDK\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\imports\kernel\HyperDbgHyperEvade.h">
+      <Filter>Header Files\SDK\imports</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\imports\kernel\HyperDbgVmmImports.h">
+      <Filter>Header Files\SDK\imports</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\modules\HyperEvade.h">
+      <Filter>Header Files\SDK\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\modules\HyperLog.h">
+      <Filter>Header Files\SDK\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SDK\modules\VMM.h">
+      <Filter>Header Files\SDK\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\Counters.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\Events.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\IdtEmulation.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\IoHandler.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\MsrHandlers.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\Mtf.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\ProtectedHv.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\Vmcall.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\VmxBroadcast.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\vmx\VmxMechanisms.h">
+      <Filter>Header Files\vmm\vmx</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\ept\Invept.h">
+      <Filter>Header Files\vmm\ept</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vmm\ept\Vpid.h">
+      <Filter>Header Files\vmm\ept</Filter>
+    </ClInclude>
+    <ClInclude Include="header\transparency\SyscallFootprints.h">
+      <Filter>Header Files\transparency</Filter>
+    </ClInclude>
+    <ClInclude Include="header\transparency\VmxFootprints.h">
+      <Filter>Header Files\transparency</Filter>
+    </ClInclude>
+    <ClInclude Include="header\globals\globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\loader\Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\interface\HyperCall.h">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\interface\DeviceIoctl.h">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="header\interface\TriggerEvents.h">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <!-- ========================================
+       Source Files Mapping
+       ======================================== -->
+  <ItemGroup>
+    <ClCompile Include="code\pch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Driver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\Vmx.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\Hv.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\Vmexit.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\VmxRegions.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\ept\Ept.c">
+      <Filter>Source Files\vmm\ept</Filter>
+    </ClCompile>
+    <ClCompile Include="code\transparency\Transparency.c">
+      <Filter>Source Files\transparency</Filter>
+    </ClCompile>
+    <ClCompile Include="code\common\Bitwise.c">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="code\common\Common.c">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="code\common\UnloadDll.c">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="code\globals\GlobalVariableManagement.c">
+      <Filter>Source Files\globals</Filter>
+    </ClCompile>
+    <ClCompile Include="code\hooks\ept-hook\EptHook.c">
+      <Filter>Source Files\hooks\ept-hook</Filter>
+    </ClCompile>
+    <ClCompile Include="code\hooks\ept-hook\ExecTrap.c">
+      <Filter>Source Files\hooks\ept-hook</Filter>
+    </ClCompile>
+    <ClCompile Include="code\hooks\ept-hook\ModeBasedExecHook.c">
+      <Filter>Source Files\hooks\ept-hook</Filter>
+    </ClCompile>
+    <ClCompile Include="code\hooks\syscall-hook\EferHook.c">
+      <Filter>Source Files\hooks\syscall-hook</Filter>
+    </ClCompile>
+    <ClCompile Include="code\hooks\syscall-hook\SyscallCallback.c">
+      <Filter>Source Files\hooks\syscall-hook</Filter>
+    </ClCompile>
+    <ClCompile Include="code\features\CompatibilityChecks.c">
+      <Filter>Source Files\features</Filter>
+    </ClCompile>
+    <ClCompile Include="code\features\DirtyLogging.c">
+      <Filter>Source Files\features</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\Callback.c">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\Configuration.c">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\DirectVmcall.c">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\Dispatch.c">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\Export.c">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="code\broadcast\Broadcast.c">
+      <Filter>Source Files\broadcast</Filter>
+    </ClCompile>
+    <ClCompile Include="code\broadcast\DpcRoutines.c">
+      <Filter>Source Files\broadcast</Filter>
+    </ClCompile>
+    <ClCompile Include="include\components\spinlock\code\Spinlock.c">
+      <Filter>Source Files\components\spinlock</Filter>
+    </ClCompile>
+    <ClCompile Include="code\components\registers\DebugRegisters.c">
+      <Filter>Source Files\components\registers</Filter>
+    </ClCompile>
+    <ClCompile Include="include\components\optimizations\code\AvlTree.c">
+      <Filter>Source Files\components\optimizations</Filter>
+    </ClCompile>
+    <ClCompile Include="include\components\optimizations\code\BinarySearch.c">
+      <Filter>Source Files\components\optimizations</Filter>
+    </ClCompile>
+    <ClCompile Include="include\components\optimizations\code\InsertionSort.c">
+      <Filter>Source Files\components\optimizations</Filter>
+    </ClCompile>
+    <ClCompile Include="include\components\optimizations\code\OptimizationsExamples.c">
+      <Filter>Source Files\components\optimizations</Filter>
+    </ClCompile>
+    <ClCompile Include="code\devices\Apic.c">
+      <Filter>Source Files\devices</Filter>
+    </ClCompile>
+    <ClCompile Include="code\devices\Pci.c">
+      <Filter>Source Files\devices</Filter>
+    </ClCompile>
+    <ClCompile Include="code\disassembler\Disassembler.c">
+      <Filter>Source Files\disassembler</Filter>
+    </ClCompile>
+    <ClCompile Include="code\disassembler\ZydisKernel.c">
+      <Filter>Source Files\disassembler</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\AddressCheck.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\Conversion.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\Layout.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\MemoryManager.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\MemoryMapper.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\PoolManager.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\Segmentation.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\memory\SwitchLayout.c">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\mmio\MmioShadowing.c">
+      <Filter>Source Files\mmio</Filter>
+    </ClCompile>
+    <ClCompile Include="code\processor\Idt.c">
+      <Filter>Source Files\processor</Filter>
+    </ClCompile>
+    <ClCompile Include="code\processor\Smm.c">
+      <Filter>Source Files\processor</Filter>
+    </ClCompile>
+    <ClCompile Include="include\platform\kernel\code\Mem.c">
+      <Filter>Source Files\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\ept\Invept.c">
+      <Filter>Source Files\vmm\ept</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\ept\Vpid.c">
+      <Filter>Source Files\vmm\ept</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\Counters.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\CrossVmexits.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\Events.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\IdtEmulation.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\IoHandler.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\ManageRegs.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\MsrHandlers.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\Mtf.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\ProtectedHv.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\Vmcall.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\VmxBroadcast.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\vmm\vmx\VmxMechanisms.c">
+      <Filter>Source Files\vmm\vmx</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\HyperEvade.c">
+      <Filter>Source Files\transparency</Filter>
+    </ClCompile>
+    <ClCompile Include="code\transparency\SyscallFootprints.c">
+      <Filter>Source Files\transparency</Filter>
+    </ClCompile>
+    <ClCompile Include="code\transparency\VmxFootprints.c">
+      <Filter>Source Files\transparency</Filter>
+    </ClCompile>
+    <ClCompile Include="code\loader\Loader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\HyperCall.c">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="test.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\DeviceIoctl.c">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="code\interface\TriggerEvents.c">
+      <Filter>Source Files\features</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <!-- ========================================
+       Assembly Files Mapping
+       ======================================== -->
+  <ItemGroup>
+    <MASM Include="code\assembly\AsmVmxOperation.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+    <MASM Include="code\assembly\AsmVmexitHandler.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+    <MASM Include="code\assembly\AsmCommon.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+    <MASM Include="code\assembly\AsmEpt.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+    <MASM Include="code\assembly\AsmHooks.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+    <MASM Include="code\assembly\AsmInterruptHandlers.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+    <MASM Include="code\assembly\AsmSegmentRegs.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+    <MASM Include="code\assembly\AsmVmxContextState.asm">
+      <Filter>Source Files\assembly</Filter>
+    </MASM>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A1B2C3D4-E5F6-4A5B-8C7D-9E0F1A2B3C4D}</ProjectGuid>
+    <TemplateGuid>{1bc93793-694f-48fe-9372-81e2b05556fd}</TemplateGuid>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <Configuration>Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <RootNamespace>SimpleHv</RootNamespace>
+    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <OutDir>$(ProjectDir)build\bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)build\obj\$(Platform)\$(Configuration)\</IntDir>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <TargetName>SimpleHv</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <OutDir>$(ProjectDir)build\bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)build\obj\$(Platform)\$(Configuration)\</IntDir>
+    <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <EnableInf2cat>false</EnableInf2cat>
+    <TargetName>SimpleHv</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(ProjectDir)header;$(ProjectDir)code;$(ProjectDir);$(SolutionDir)dependencies;$(SolutionDir)dependencies\zydis\include;$(SolutionDir)dependencies\zydis\dependencies\zycore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>ZYDIS_STATIC_BUILD;ZYCORE_STATIC_BUILD;ZYAN_NO_LIBC;ZYDIS_NO_LIBC;_AMD64_;AMD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+      <EntryPointSymbol>DriverEntry</EntryPointSymbol>
+      <AdditionalDependencies>$(SolutionDir)dependencies\zydis\msvc\bin\DebugX64Kernel\Zycore.lib;$(SolutionDir)dependencies\zydis\msvc\bin\DebugX64Kernel\Zydis.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(ProjectDir)header;$(ProjectDir)code;$(ProjectDir);$(SolutionDir)dependencies;$(SolutionDir)dependencies\zydis\include;$(SolutionDir)dependencies\zydis\dependencies\zycore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>ZYDIS_STATIC_BUILD;ZYCORE_STATIC_BUILD;ZYAN_NO_LIBC;ZYDIS_NO_LIBC;_AMD64_;AMD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+      <EntryPointSymbol>DriverEntry</EntryPointSymbol>
+      <AdditionalDependencies>$(SolutionDir)dependencies\zydis\msvc\bin\ReleaseX64Kernel\Zycore.lib;$(SolutionDir)dependencies\zydis\msvc\bin\ReleaseX64Kernel\Zydis.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="header\assembly\InlineAsm.h" />
+    <ClInclude Include="header\broadcast\Broadcast.h" />
+    <ClInclude Include="header\broadcast\DpcRoutines.h" />
+    <ClInclude Include="header\devices\Apic.h" />
+    <ClInclude Include="header\devices\Pci.h" />
+    <ClInclude Include="header\disassembler\Disassembler.h" />
+    <ClInclude Include="header\features\CompatibilityChecks.h" />
+    <ClInclude Include="header\features\DirtyLogging.h" />
+    <ClInclude Include="header\globals\globals.h" />
+    <ClInclude Include="header\globals\GlobalVariableManagement.h" />
+    <ClInclude Include="header\globals\GlobalVariables.h" />
+    <ClInclude Include="header\hooks\ExecTrap.h" />
+    <ClInclude Include="header\hooks\Hooks.h" />
+    <ClInclude Include="header\hooks\ModeBasedExecHook.h" />
+    <ClInclude Include="header\hooks\SyscallCallback.h" />
+    <ClInclude Include="header\interface\Callback.h" />
+    <ClInclude Include="header\interface\DeviceIoctl.h" />
+    <ClInclude Include="header\interface\DirectVmcall.h" />
+    <ClInclude Include="header\interface\Dispatch.h" />
+    <ClInclude Include="header\interface\HyperCall.h" />
+    <ClInclude Include="header\interface\TriggerEvents.h" />
+    <ClInclude Include="header\loader\Loader.h" />
+    <ClInclude Include="header\memory\AddressCheck.h" />
+    <ClInclude Include="header\memory\Conversion.h" />
+    <ClInclude Include="header\memory\Layout.h" />
+    <ClInclude Include="header\memory\MemoryMapper.h" />
+    <ClInclude Include="header\memory\PoolManager.h" />
+    <ClInclude Include="header\memory\Segmentation.h" />
+    <ClInclude Include="header\memory\SwitchLayout.h" />
+    <ClInclude Include="header\mmio\MmioShadowing.h" />
+    <ClInclude Include="header\pch.h" />
+    <ClInclude Include="header\common\Common.h" />
+    <ClInclude Include="header\common\State.h" />
+    <ClInclude Include="header\processor\Idt.h" />
+    <ClInclude Include="header\processor\Smm.h" />
+    <ClInclude Include="header\transparency\SyscallFootprints.h" />
+    <ClInclude Include="header\transparency\VmxFootprints.h" />
+    <ClInclude Include="header\vmm\ept\Invept.h" />
+    <ClInclude Include="header\vmm\ept\Vpid.h" />
+    <ClInclude Include="header\vmm\vmx\Counters.h" />
+    <ClInclude Include="header\vmm\vmx\Events.h" />
+    <ClInclude Include="header\vmm\vmx\IdtEmulation.h" />
+    <ClInclude Include="header\vmm\vmx\IoHandler.h" />
+    <ClInclude Include="header\vmm\vmx\MsrHandlers.h" />
+    <ClInclude Include="header\vmm\vmx\Mtf.h" />
+    <ClInclude Include="header\vmm\vmx\ProtectedHv.h" />
+    <ClInclude Include="header\vmm\vmx\Vmcall.h" />
+    <ClInclude Include="header\vmm\vmx\Vmx.h" />
+    <ClInclude Include="header\vmm\vmx\Hv.h" />
+    <ClInclude Include="header\vmm\vmx\Vmexit.h" />
+    <ClInclude Include="header\vmm\vmx\VmxBroadcast.h" />
+    <ClInclude Include="header\vmm\vmx\VmxMechanisms.h" />
+    <ClInclude Include="header\vmm\vmx\VmxRegions.h" />
+    <ClInclude Include="header\vmm\ept\Ept.h" />
+    <ClInclude Include="header\transparency\Transparency.h" />
+    <ClInclude Include="include\components\optimizations\header\AvlTree.h" />
+    <ClInclude Include="include\components\optimizations\header\BinarySearch.h" />
+    <ClInclude Include="include\components\optimizations\header\InsertionSort.h" />
+    <ClInclude Include="include\components\optimizations\header\OptimizationsExamples.h" />
+    <ClInclude Include="include\components\spinlock\header\Spinlock.h" />
+    <ClInclude Include="include\macros\MetaMacros.h" />
+    <ClInclude Include="include\platform\kernel\header\Environment.h" />
+    <ClInclude Include="include\platform\kernel\header\Mem.h" />
+    <ClInclude Include="include\SDK\headers\Assertions.h" />
+    <ClInclude Include="include\SDK\headers\BasicTypes.h" />
+    <ClInclude Include="include\SDK\headers\Connection.h" />
+    <ClInclude Include="include\SDK\headers\Constants.h" />
+    <ClInclude Include="include\SDK\headers\DataTypes.h" />
+    <ClInclude Include="include\SDK\headers\ErrorCodes.h" />
+    <ClInclude Include="include\SDK\headers\Events.h" />
+    <ClInclude Include="include\SDK\headers\HardwareDebugger.h" />
+    <ClInclude Include="include\SDK\headers\Ioctls.h" />
+    <ClInclude Include="include\SDK\headers\Pcie.h" />
+    <ClInclude Include="include\SDK\headers\RequestStructures.h" />
+    <ClInclude Include="include\SDK\headers\ScriptEngineCommonDefinitions.h" />
+    <ClInclude Include="include\SDK\headers\Symbols.h" />
+    <ClInclude Include="include\SDK\HyperDbgSdk.h" />
+    <ClInclude Include="include\SDK\imports\kernel\HyperDbgHyperEvade.h" />
+    <ClInclude Include="include\SDK\imports\kernel\HyperDbgVmmImports.h" />
+    <ClInclude Include="include\SDK\modules\HyperEvade.h" />
+    <ClInclude Include="include\SDK\modules\HyperLog.h" />
+    <ClInclude Include="include\SDK\modules\VMM.h" />
+    <ClInclude Include="test.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\broadcast\Broadcast.c" />
+    <ClCompile Include="code\broadcast\DpcRoutines.c" />
+    <ClCompile Include="code\common\Bitwise.c" />
+    <ClCompile Include="code\common\Common.c" />
+    <ClCompile Include="code\common\UnloadDll.c" />
+    <ClCompile Include="code\components\registers\DebugRegisters.c" />
+    <ClCompile Include="code\devices\Apic.c" />
+    <ClCompile Include="code\devices\Pci.c" />
+    <ClCompile Include="code\disassembler\Disassembler.c" />
+    <ClCompile Include="code\disassembler\ZydisKernel.c" />
+    <ClCompile Include="code\features\CompatibilityChecks.c" />
+    <ClCompile Include="code\features\DirtyLogging.c" />
+    <ClCompile Include="code\globals\GlobalVariableManagement.c" />
+    <ClCompile Include="code\hooks\ept-hook\EptHook.c" />
+    <ClCompile Include="code\hooks\ept-hook\ExecTrap.c" />
+    <ClCompile Include="code\hooks\ept-hook\ModeBasedExecHook.c" />
+    <ClCompile Include="code\hooks\syscall-hook\EferHook.c" />
+    <ClCompile Include="code\hooks\syscall-hook\SyscallCallback.c" />
+    <ClCompile Include="code\interface\Callback.c" />
+    <ClCompile Include="code\interface\Configuration.c" />
+    <ClCompile Include="code\interface\DeviceIoctl.c" />
+    <ClCompile Include="code\interface\DirectVmcall.c" />
+    <ClCompile Include="code\interface\Dispatch.c" />
+    <ClCompile Include="code\interface\Export.c" />
+    <ClCompile Include="code\interface\HyperCall.c" />
+    <ClCompile Include="code\interface\HyperEvade.c" />
+    <ClCompile Include="code\interface\TriggerEvents.c" />
+    <ClCompile Include="code\loader\Loader.c" />
+    <ClCompile Include="code\memory\AddressCheck.c" />
+    <ClCompile Include="code\memory\Conversion.c" />
+    <ClCompile Include="code\memory\Layout.c" />
+    <ClCompile Include="code\memory\MemoryManager.c" />
+    <ClCompile Include="code\memory\MemoryMapper.c" />
+    <ClCompile Include="code\memory\PoolManager.c" />
+    <ClCompile Include="code\memory\Segmentation.c" />
+    <ClCompile Include="code\memory\SwitchLayout.c" />
+    <ClCompile Include="code\mmio\MmioShadowing.c" />
+    <ClCompile Include="code\pch.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="code\Driver.c" />
+    <ClCompile Include="code\processor\Idt.c" />
+    <ClCompile Include="code\processor\Smm.c" />
+    <ClCompile Include="code\transparency\SyscallFootprints.c" />
+    <ClCompile Include="code\transparency\VmxFootprints.c" />
+    <ClCompile Include="code\vmm\ept\Invept.c" />
+    <ClCompile Include="code\vmm\ept\Vpid.c" />
+    <ClCompile Include="code\vmm\vmx\Counters.c" />
+    <ClCompile Include="code\vmm\vmx\CrossVmexits.c" />
+    <ClCompile Include="code\vmm\vmx\Events.c" />
+    <ClCompile Include="code\vmm\vmx\IdtEmulation.c" />
+    <ClCompile Include="code\vmm\vmx\IoHandler.c" />
+    <ClCompile Include="code\vmm\vmx\ManageRegs.c" />
+    <ClCompile Include="code\vmm\vmx\MsrHandlers.c" />
+    <ClCompile Include="code\vmm\vmx\Mtf.c" />
+    <ClCompile Include="code\vmm\vmx\ProtectedHv.c" />
+    <ClCompile Include="code\vmm\vmx\Vmcall.c" />
+    <ClCompile Include="code\vmm\vmx\Vmx.c" />
+    <ClCompile Include="code\vmm\vmx\Hv.c" />
+    <ClCompile Include="code\vmm\vmx\Vmexit.c" />
+    <ClCompile Include="code\vmm\vmx\VmxBroadcast.c" />
+    <ClCompile Include="code\vmm\vmx\VmxMechanisms.c" />
+    <ClCompile Include="code\vmm\vmx\VmxRegions.c" />
+    <ClCompile Include="code\vmm\ept\Ept.c" />
+    <ClCompile Include="code\transparency\Transparency.c" />
+    <ClCompile Include="include\components\optimizations\code\AvlTree.c" />
+    <ClCompile Include="include\components\optimizations\code\BinarySearch.c" />
+    <ClCompile Include="include\components\optimizations\code\InsertionSort.c" />
+    <ClCompile Include="include\components\optimizations\code\OptimizationsExamples.c" />
+    <ClCompile Include="include\components\spinlock\code\Spinlock.c" />
+    <ClCompile Include="include\platform\kernel\code\Mem.c" />
+    <ClCompile Include="test.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="code\assembly\AsmCommon.asm" />
+    <MASM Include="code\assembly\AsmEpt.asm" />
+    <MASM Include="code\assembly\AsmHooks.asm" />
+    <MASM Include="code\assembly\AsmInterruptHandlers.asm" />
+    <MASM Include="code\assembly\AsmSegmentRegs.asm" />
+    <MASM Include="code\assembly\AsmVmxContextState.asm" />
+    <MASM Include="code\assembly\AsmVmxOperation.asm" />
+    <MASM Include="code\assembly\AsmVmexitHandler.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>
