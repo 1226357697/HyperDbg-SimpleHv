@@ -10,9 +10,9 @@
  */
 #pragma once
 
-//// ÐÞ¸ÄÎª£º
+//// ï¿½Þ¸ï¿½Îªï¿½ï¿½
 //#ifdef HYPERDBG_STATIC_LIB
-//#    define IMPORT_EXPORT_VMM  // ¾²Ì¬¿âÄ£Ê½ÏÂ£¬²»ÐèÒªµ¼Èë/µ¼³öÉùÃ÷
+//#    define IMPORT_EXPORT_VMM  // ï¿½ï¿½Ì¬ï¿½ï¿½Ä£Ê½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //#else
 //#    ifdef HYPERDBG_VMM
 //#        define IMPORT_EXPORT_VMM __declspec(dllexport)
@@ -319,7 +319,8 @@ IMPORT_EXPORT_VMM BOOLEAN
 ConfigureEptHook2(UINT32 CoreId,
                   PVOID  TargetAddress,
                   PVOID  HookFunction,
-                  UINT32 ProcessId);
+                  UINT32 ProcessId,
+                  PVOID * OutTrampoline);
 
 IMPORT_EXPORT_VMM BOOLEAN
 ConfigureEptHook2FromVmxRoot(UINT32 CoreId,

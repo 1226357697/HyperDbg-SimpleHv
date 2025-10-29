@@ -156,6 +156,7 @@ EptHookFromVmxRoot(PVOID TargetAddress);
  * @param TargetAddress
  * @param HookFunction
  * @param ProcessId
+ * @param OutTrampoline Optional output parameter to receive the trampoline address (can be NULL)
  *
  * @return BOOLEAN
  */
@@ -163,7 +164,8 @@ BOOLEAN
 EptHookInlineHook(VIRTUAL_MACHINE_STATE * VCpu,
                   PVOID                   TargetAddress,
                   PVOID                   HookFunction,
-                  UINT32                  ProcessId);
+                  UINT32                  ProcessId,
+                  PVOID *                 OutTrampoline);
 
 /**
  * @brief This function applies monitor hooks to the target EPT table
@@ -417,17 +419,17 @@ EptHookHandleMonitorTrapFlag(VIRTUAL_MACHINE_STATE * VCpu);
 
 
 /**
- * @brief ×Ô¶¯ÅÐ¶Ï²¢°²×° EPT Inline Hook (R0/R3 ×ÔÊÊÓ¦)
- * @details ¸ù¾ÝÄ¿±êµØÖ·×Ô¶¯ÅÐ¶ÏÊÇÄÚºËº¯Êý»¹ÊÇÓÃ»§º¯Êý£¬
- *          ²¢Ê¹ÓÃºÏÊÊµÄ CR3 ½øÐÐ Hook¡£Ö§³Ö¿çÒ³¼ì²â¡¢µØÖ·ÑéÖ¤¡¢ÏêÏ¸ÈÕÖ¾¡£
+ * @brief ï¿½Ô¶ï¿½ï¿½Ð¶Ï²ï¿½ï¿½ï¿½×° EPT Inline Hook (R0/R3 ï¿½ï¿½ï¿½ï¿½Ó¦)
+ * @details ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ö·ï¿½Ô¶ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ÚºËºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ *          ï¿½ï¿½Ê¹ï¿½Ãºï¿½ï¿½Êµï¿½ CR3 ï¿½ï¿½ï¿½ï¿½ Hookï¿½ï¿½Ö§ï¿½Ö¿ï¿½Ò³ï¿½ï¿½â¡¢ï¿½ï¿½Ö·ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½Ö¾ï¿½ï¿½
  *
- * @param TargetAddress Òª Hook µÄÄ¿±êµØÖ·£¨Ö§³Ö R0/R3 ×Ô¶¯¼ì²â£©
- * @param HookFunction Hook ´¦Àíº¯ÊýµØÖ·
- * @param ProcessId ½ø³Ì ID£¨½öÓÃÓÚ R3 µØÖ·£©
- *                  - 0: ¶ÔÓÚ R3 µØÖ·Ê¹ÓÃµ÷ÓÃÕß½ø³Ì£¬¶ÔÓÚ R0 µØÖ·ºöÂÔ
- *                  - ·Ç 0: ¶ÔÓÚ R3 µØÖ·Ê¹ÓÃÖ¸¶¨½ø³Ì£¬¶ÔÓÚ R0 µØÖ·ºöÂÔ
+ * @param TargetAddress Òª Hook ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Ö§ï¿½ï¿½ R0/R3 ï¿½Ô¶ï¿½ï¿½ï¿½â£©
+ * @param HookFunction Hook ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
+ * @param ProcessId ï¿½ï¿½ï¿½ï¿½ IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ R3 ï¿½ï¿½Ö·ï¿½ï¿½
+ *                  - 0: ï¿½ï¿½ï¿½ï¿½ R3 ï¿½ï¿½Ö·Ê¹ï¿½Ãµï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ R0 ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
+ *                  - ï¿½ï¿½ 0: ï¿½ï¿½ï¿½ï¿½ R3 ï¿½ï¿½Ö·Ê¹ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ R0 ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
  *
- * @return BOOLEAN ³É¹¦·µ»Ø TRUE£¬Ê§°Ü·µ»Ø FALSE
+ * @return BOOLEAN ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ TRUEï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½ FALSE
  */
 BOOLEAN
 EptHookInstallHiddenInlineHookAuto(

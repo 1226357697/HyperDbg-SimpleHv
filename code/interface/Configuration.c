@@ -290,6 +290,7 @@ ConfigureEptHookFromVmxRoot(PVOID TargetAddress)
  * @param TargetAddress The address of function or memory address to be hooked
  * @param HookFunction The function that will be called when hook triggered
  * @param ProcessId The process id to translate based on that process's cr3
+ * @param OutTrampoline Optional output parameter to receive the trampoline address (can be NULL)
  *
  * @return BOOLEAN Returns true if the hook was successful or false if there was an error
  */
@@ -297,12 +298,14 @@ BOOLEAN
 ConfigureEptHook2(UINT32 CoreId,
                   PVOID  TargetAddress,
                   PVOID  HookFunction,
-                  UINT32 ProcessId)
+                  UINT32 ProcessId,
+                  PVOID * OutTrampoline)
 {
     return EptHookInlineHook(&g_GuestState[CoreId],
                              TargetAddress,
                              HookFunction,
-                             ProcessId);
+                             ProcessId,
+                             OutTrampoline);
 }
 
 /**

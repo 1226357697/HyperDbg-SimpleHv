@@ -59,6 +59,16 @@ PCWCH protected_process_list[] = {
 	L"windbg"
 };
 
+// ANSI 版本的保护进程列表（用于 IsProtectedProcessA）
+PCSZ protected_process_list_a[] = {
+	"cheatengine",
+	"HyperCE",
+	"x64dbg",
+	"x32dbg",
+	"ida",
+	"windbg"
+};
+
 // ========================================
 // 辅助函数
 // ========================================
@@ -75,6 +85,49 @@ BOOLEAN StringArrayContainsW(PCWCH str, PCWCH* arr, SIZE_T len)
 	return FALSE;
 }
 
+/**
+ * @brief 安全的字符串子串查找（避免越界读取）
+ * @details PsGetProcessImageFileName 返回15字节固定长度数组，可能不是 null-terminated
+ *          使用 RtlCompareMemory 进行安全的内存比较
+ */
+BOOLEAN StringArrayContainsA(PCSZ str, PCSZ* arr, SIZE_T len)
+{
+	if (str == NULL || arr == NULL || len == 0)
+		return FALSE;
+
+	// PsGetProcessImageFileName 返回的最大长度是15字节
+	SIZE_T str_len = 0;
+	for (SIZE_T i = 0; i < 15; i++) {
+		if (str[i] == '\0')
+			break;
+		str_len++;
+	}
+
+	// 遍历保护进程列表
+	for (SIZE_T i = 0; i < len; i++) {
+		if (arr[i] == NULL)
+			continue;
+
+		SIZE_T pattern_len = 0;
+		while (arr[i][pattern_len] != '\0') {
+			pattern_len++;
+		}
+
+		if (pattern_len == 0 || pattern_len > str_len)
+			continue;
+
+		// 在 str 中查找 arr[i]
+		for (SIZE_T j = 0; j <= str_len - pattern_len; j++) {
+			// 使用 RtlCompareMemory 进行安全比较
+			if (RtlCompareMemory(&str[j], arr[i], pattern_len) == pattern_len) {
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
 BOOLEAN IsProtectedProcessW(PCWCH process)
 {
 	if (process == NULL)
@@ -84,24 +137,21 @@ BOOLEAN IsProtectedProcessW(PCWCH process)
 		process, protected_process_list, sizeof(protected_process_list) / sizeof(PCWCH));
 }
 
+/**
+ * @brief 检查进程名是否在保护列表中（ANSI 版本）
+ * @details 直接比较 ANSI 字符串，不进行内存分配，可在任意 IRQL 下安全调用
+ * @param process 进程名（ANSI 字符串，通常来自 PsGetProcessImageFileName）
+ * @return TRUE 如果在保护列表中，FALSE 否则
+ */
 BOOLEAN IsProtectedProcessA(PCSZ process)
 {
-	ANSI_STRING process_ansi = { 0 };
-	UNICODE_STRING process_unicode = { 0 };
-	NTSTATUS status;
-	BOOLEAN result;
-
 	if (process == NULL)
 		return FALSE;
 
-	RtlInitAnsiString(&process_ansi, process);
-	status = RtlAnsiStringToUnicodeString(&process_unicode, &process_ansi, TRUE);
-	if (!NT_SUCCESS(status))
-		return FALSE;
-
-	result = IsProtectedProcessW(process_unicode.Buffer);
-	RtlFreeUnicodeString(&process_unicode);
-	return result;
+	// 直接使用 ANSI 字符串比较，不需要转换为 Unicode
+	// 这样可以避免内存分配，在任意 IRQL 下都是安全的
+	return StringArrayContainsA(
+		process, protected_process_list_a, sizeof(protected_process_list_a) / sizeof(PCSZ));
 }
 
 /**
@@ -146,12 +196,24 @@ NTSTATUS ObpReferenceObjectByHandleWithTagHook(
 	POBJECT_HANDLE_INFORMATION HandleInformation,
 	__int64 a0)
 {
+	// 如果 trampoline 还没准备好（Hook 正在安装中），返回错误避免崩溃
+	if (old_ObpReferenceObjectByHandleWithTag == NULL) {
+		// Hook 还未完全安装，直接返回错误
+		// 注意：不能调用原函数（会再次触发 Hook 导致死循环）
+		return STATUS_UNSUCCESSFUL;
+	}
+
 	char* curr_process_name = PsGetProcessImageFileName(PsGetCurrentProcess());
 
 	// 如果当前进程是受保护进程，降低其权限
 	if (IsProtectedProcessA(curr_process_name)) {
+		static BOOLEAN first_log = TRUE;
+		if (first_log) {
+			first_log = FALSE;
+			SimpleHvLog("[Hook] Protected process '%s' detected, blocking access", curr_process_name);
+		}
+
 		// 将访问权限设为 0，访问模式设为 KernelMode
-		// 这样受保护的进程无法读写其他进程
 		return old_ObpReferenceObjectByHandleWithTag(
 			Handle, 0, ObjectType, KernelMode, Tag, Object, HandleInformation, a0);
 	}
@@ -174,6 +236,11 @@ NTSTATUS NtQuerySystemInformationHook(
 	NTSTATUS stat;
 	PSYSTEM_PROCESS_INFORMATION prev;
 	PSYSTEM_PROCESS_INFORMATION curr;
+
+	// 如果 trampoline 还没准备好（Hook 正在安装中），返回错误
+	if (old_NtQuerySystemInformation == NULL) {
+		return STATUS_UNSUCCESSFUL;
+	}
 
 	// 调用原始函数
 	stat = old_NtQuerySystemInformation(
@@ -241,19 +308,31 @@ NTSTATUS InstallTestHooks(VOID)
 
 	SimpleHvLog("[Test] ObpReferenceObjectByHandleWithTag: 0x%llx", pObpReferenceObjectByHandleWithTag);
 
-	// 保存原始函数地址（用于在 Hook 中调用原函数）
-	old_ObpReferenceObjectByHandleWithTag = (fnObReferenceObjectByHandleWithTag)pObpReferenceObjectByHandleWithTag;
-
-	// 安装 EPT Hook
+	// 安装 EPT Hook 并获取 trampoline 地址
 	//result = EptHookInstallHiddenInlineHookAuto(
 	//	pObpReferenceObjectByHandleWithTag,                // 目标函数地址
 	//	(PVOID)ObpReferenceObjectByHandleWithTagHook,      // Hook 处理函数
 	//	0                                                   // ProcessId (0 = 内核 hook)
 	//);
 
-	result = ConfigureEptHook2(KeGetCurrentProcessorNumberEx(NULL), pObpReferenceObjectByHandleWithTag, (PVOID)ObpReferenceObjectByHandleWithTagHook, (UINT32)(ULONG_PTR)PsGetCurrentProcessId());
+	result = ConfigureEptHook2(KeGetCurrentProcessorNumberEx(NULL),
+	                           pObpReferenceObjectByHandleWithTag,
+	                           (PVOID)ObpReferenceObjectByHandleWithTagHook,
+	                           (UINT32)(ULONG_PTR)PsGetCurrentProcessId(),
+	                           (PVOID*)&old_ObpReferenceObjectByHandleWithTag);
 	if (result) {
 		SimpleHvLog("[Test] Hook 1 installed: ObpReferenceObjectByHandleWithTag");
+		SimpleHvLog("[Test] Trampoline address: 0x%llx", old_ObpReferenceObjectByHandleWithTag);
+
+		if (old_ObpReferenceObjectByHandleWithTag == NULL) {
+			SimpleHvLogError("[Test] ERROR: Trampoline is NULL!");
+			return STATUS_UNSUCCESSFUL;
+		}
+
+		if ((UINT64)old_ObpReferenceObjectByHandleWithTag < 0xFFFF000000000000) {
+			SimpleHvLogError("[Test] ERROR: Trampoline address looks invalid: 0x%llx", old_ObpReferenceObjectByHandleWithTag);
+			return STATUS_UNSUCCESSFUL;
+		}
 	} else {
 		SimpleHvLogError("[Test] Failed to install Hook 1");
 		return STATUS_UNSUCCESSFUL;
@@ -274,25 +353,34 @@ NTSTATUS InstallTestHooks(VOID)
 
 	SimpleHvLog("[Test] NtQuerySystemInformation: 0x%llx", pNtQuerySystemInformation);
 
-	// 保存原始函数地址
-	old_NtQuerySystemInformation = (fnNtQuerySystemInformation)pNtQuerySystemInformation;
-
-
-
-
-	// 安装 EPT Hook
+	// 安装 EPT Hook 并获取 trampoline 地址
 	//result = EptHookInstallHiddenInlineHookAuto(
 	//	pNtQuerySystemInformation,                         // 目标函数地址
 	//	(PVOID)NtQuerySystemInformationHook,               // Hook 处理函数
 	//	0                                                   // ProcessId (0 = 内核 hook)
 	//);
-	/*result =  ConfigureEptHook2(KeGetCurrentProcessorNumberEx(NULL), pNtQuerySystemInformation, (PVOID)NtQuerySystemInformationHook, HANDLE_TO_UINT32(PsGetCurrentProcessId()));
+	result = ConfigureEptHook2(KeGetCurrentProcessorNumberEx(NULL),
+	                            pNtQuerySystemInformation,
+	                            (PVOID)NtQuerySystemInformationHook,
+	                            HANDLE_TO_UINT32(PsGetCurrentProcessId()),
+	                            (PVOID*)&old_NtQuerySystemInformation);
 	if (result) {
 		SimpleHvLog("[Test] Hook 2 installed: NtQuerySystemInformation");
+		SimpleHvLog("[Test] Trampoline address: 0x%llx", old_NtQuerySystemInformation);
+
+		if (old_NtQuerySystemInformation == NULL) {
+			SimpleHvLogError("[Test] ERROR: Hook 2 Trampoline is NULL!");
+			return STATUS_UNSUCCESSFUL;
+		}
+
+		if ((UINT64)old_NtQuerySystemInformation < 0xFFFF000000000000) {
+			SimpleHvLogError("[Test] ERROR: Hook 2 Trampoline address looks invalid: 0x%llx", old_NtQuerySystemInformation);
+			return STATUS_UNSUCCESSFUL;
+		}
 	} else {
 		SimpleHvLogError("[Test] Failed to install Hook 2");
 		return STATUS_UNSUCCESSFUL;
-	}*/
+	}
 
 	// ========================================
 	// 4. 完成

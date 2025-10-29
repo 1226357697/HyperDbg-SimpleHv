@@ -806,6 +806,53 @@ EptHookWriteAbsoluteJump(PCHAR TargetBuffer, SIZE_T TargetAddress)
 }
 
 /**
+ * @brief Write an absolute x64 jump (TRUE stack-preserving version, 19 bytes)
+ * @details This version TRULY preserves RSP by using JMP instead of RET.
+ *          Uses: push low32; mov [rsp+4], high32; pop rax; jmp rax; nop...
+ *          Critical: RSP remains unchanged after execution (push + pop = no change)
+ *
+ * @param TargetBuffer Buffer to write the jump code
+ * @param TargetAddress Target address to jump to
+ * @return VOID
+ */
+VOID
+EptHookWriteAbsoluteJumpStackSafe(PCHAR TargetBuffer, SIZE_T TargetAddress)
+{
+    //
+    // push Lower 4-byte TargetAddress (5 bytes)
+    //
+    TargetBuffer[0] = 0x68;
+    *((PUINT32)&TargetBuffer[1]) = (UINT32)TargetAddress;
+
+    //
+    // mov dword ptr [rsp+4], High 4-byte TargetAddress (8 bytes)
+    //
+    TargetBuffer[5] = 0xC7;
+    TargetBuffer[6] = 0x44;
+    TargetBuffer[7] = 0x24;
+    TargetBuffer[8] = 0x04;
+    *((PUINT32)&TargetBuffer[9]) = (UINT32)(TargetAddress >> 32);
+
+    //
+    // pop rax - Pop the 64-bit address into rax, RSP returns to original value (1 byte)
+    //
+    TargetBuffer[13] = 0x58;
+
+    //
+    // jmp rax - Jump to the address in rax (2 bytes)
+    //
+    TargetBuffer[14] = 0xFF;
+    TargetBuffer[15] = 0xE0;
+
+    //
+    // nop padding to reach 19 bytes (3 bytes)
+    //
+    TargetBuffer[16] = 0x90;
+    TargetBuffer[17] = 0x90;
+    TargetBuffer[18] = 0x90;
+}
+
+/**
  * @brief Write an absolute x64 jump to an arbitrary address to a buffer
  *
  * @param TargetBuffer
@@ -945,8 +992,11 @@ EptHookInstructionMemory(PEPT_HOOKED_PAGE_DETAIL Hook,
 
     //
     // Add the absolute jump back to the original function
+    // Use stack-preserving version (push+pop+jmp) to avoid stack corruption
     //
-    EptHookWriteAbsoluteJump2(&Hook->Trampoline[SizeOfHookedInstructions], (SIZE_T)TargetFunction + SizeOfHookedInstructions);
+    EptHookWriteAbsoluteJumpStackSafe(&Hook->Trampoline[SizeOfHookedInstructions], (SIZE_T)TargetFunction + SizeOfHookedInstructions);
+
+    SimpleHvLog("[EptHookInstructionMemory] Trampoline jump also using stack-preserving method");
 
     //
     //
@@ -982,8 +1032,12 @@ EptHookInstructionMemory(PEPT_HOOKED_PAGE_DETAIL Hook,
 
     //
     // Write the absolute jump to our shadow page memory to jump to our hook
+    // Use stack-preserving version (push+pop+jmp) to maintain RSP when jumping to C functions
     //
-    EptHookWriteAbsoluteJump(&Hook->FakePageContents[OffsetIntoPage], (SIZE_T)HookFunction);
+    EptHookWriteAbsoluteJumpStackSafe(&Hook->FakePageContents[OffsetIntoPage], (SIZE_T)HookFunction);
+
+    SimpleHvLog("[EptHookInstructionMemory] Using stack-preserving jump (push+pop+jmp) to HookFunction: 0x%llx", HookFunction);
+    SimpleHvLog("[EptHookInstructionMemory] RSP will be preserved, no stack corruption");
 
     return TRUE;
 }
@@ -1563,6 +1617,7 @@ EptHookPerformMemoryOrInlineHook(VIRTUAL_MACHINE_STATE* VCpu,
  * @param TargetAddress The address of function or memory address to be hooked
  * @param HookFunction The function that will be called when hook triggered
  * @param ProcessId The process id to translate based on that process's cr3
+ * @param OutTrampoline Optional output parameter to receive the trampoline address (can be NULL)
  *
  * @return BOOLEAN Returns true if the hook was successful or false if there was an error
  */
@@ -1570,7 +1625,8 @@ BOOLEAN
 EptHookInlineHook(VIRTUAL_MACHINE_STATE * VCpu,
                   PVOID                   TargetAddress,
                   PVOID                   HookFunction,
-                  UINT32                  ProcessId)
+                  UINT32                  ProcessId,
+                  PVOID *                 OutTrampoline)
 {
     EPT_HOOKS_ADDRESS_DETAILS_FOR_EPTHOOK2 HookingDetail = {0};
 
@@ -1588,12 +1644,65 @@ EptHookInlineHook(VIRTUAL_MACHINE_STATE * VCpu,
     HookingDetail.TargetAddress = TargetAddress;
     HookingDetail.HookFunction  = HookFunction;
 
-    return EptHookPerformMemoryOrInlineHook(VCpu,
-                                            &HookingDetail,
-                                            NULL,
-                                            ProcessId,
-                                            TRUE,
-                                            FALSE);
+    BOOLEAN Result = EptHookPerformMemoryOrInlineHook(VCpu,
+                                                       &HookingDetail,
+                                                       NULL,
+                                                       ProcessId,
+                                                       TRUE,
+                                                       FALSE);
+
+    //
+    // If hook was successful and caller wants the trampoline address
+    //
+    if (Result && OutTrampoline != NULL)
+    {
+        //
+        // Initialize output to NULL
+        //
+        *OutTrampoline = NULL;
+
+        //
+        // Iterate through the list of hooked pages to find the trampoline
+        //
+        PLIST_ENTRY TempList = &g_EptHook2sDetourListHead;
+        BOOLEAN     Found    = FALSE;
+
+        while (&g_EptHook2sDetourListHead != TempList->Flink)
+        {
+            TempList                                          = TempList->Flink;
+            PHIDDEN_HOOKS_DETOUR_DETAILS CurrentHookedDetails = CONTAINING_RECORD(TempList, HIDDEN_HOOKS_DETOUR_DETAILS, OtherHooksList);
+
+            SimpleHvLog("[EptHookInlineHook] Checking: HookedAddr=0x%llx, TargetAddr=0x%llx, Trampoline=0x%llx",
+                        CurrentHookedDetails->HookedFunctionAddress,
+                        TargetAddress,
+                        CurrentHookedDetails->ReturnAddress);
+
+            if (CurrentHookedDetails->HookedFunctionAddress == TargetAddress)
+            {
+                *OutTrampoline = CurrentHookedDetails->ReturnAddress;
+                Found          = TRUE;
+                SimpleHvLog("[EptHookInlineHook] SUCCESS: Found trampoline at 0x%llx for target 0x%llx",
+                            *OutTrampoline,
+                            TargetAddress);
+                break;
+            }
+        }
+
+        if (!Found)
+        {
+            SimpleHvLogError("[EptHookInlineHook] ERROR: Failed to find trampoline for target 0x%llx", TargetAddress);
+            SimpleHvLogError("[EptHookInlineHook] List head at: 0x%llx", &g_EptHook2sDetourListHead);
+            return FALSE;  // Hook succeeded but trampoline not found - this is an error
+        }
+
+        //
+        // Use memory barrier to ensure trampoline address is visible to all cores
+        //
+        MemoryBarrier();
+        SimpleHvLog("[EptHookInlineHook] Trampoline address synchronized across all cores");
+    }
+
+    return Result;
 }
 
 /**
@@ -3035,7 +3144,7 @@ EptHookInstallHiddenInlineHookAuto(
     //
     SimpleHvLog("  Calling EPT Hook engine...");
 
-    BOOLEAN Result = ConfigureEptHook2(KeGetCurrentProcessorNumberEx(NULL),TargetAddress,HookFunction,ProcessId );
+    BOOLEAN Result = ConfigureEptHook2(KeGetCurrentProcessorNumberEx(NULL),TargetAddress,HookFunction,ProcessId, NULL);
 
     if (Result)
     {
