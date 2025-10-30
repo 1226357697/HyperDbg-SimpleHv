@@ -156,7 +156,7 @@ EptHookFromVmxRoot(PVOID TargetAddress);
  * @param TargetAddress
  * @param HookFunction
  * @param ProcessId
- * @param OutTrampoline Optional output parameter to receive the trampoline address (can be NULL)
+ * @param OutTrampoline Pointer to pointer for atomic update of trampoline address (pass &your_variable, can be NULL)
  *
  * @return BOOLEAN
  */

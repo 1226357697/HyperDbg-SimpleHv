@@ -906,7 +906,8 @@ EptHookInstructionMemory(PEPT_HOOKED_PAGE_DETAIL Hook,
                          CR3_TYPE                ProcessCr3,
                          PVOID                   TargetFunction,
                          PVOID                   TargetFunctionInSafeMemory,
-                         PVOID                   HookFunction)
+                         PVOID                   HookFunction,
+                         PVOID *                 OutTrampoline)
 {
     PHIDDEN_HOOKS_DETOUR_DETAILS DetourHookDetails;
     SIZE_T                       SizeOfHookedInstructions;
@@ -997,6 +998,20 @@ EptHookInstructionMemory(PEPT_HOOKED_PAGE_DETAIL Hook,
     EptHookWriteAbsoluteJumpStackSafe(&Hook->Trampoline[SizeOfHookedInstructions], (SIZE_T)TargetFunction + SizeOfHookedInstructions);
 
     SimpleHvLog("[EptHookInstructionMemory] Trampoline jump also using stack-preserving method");
+
+    //
+    // Atomic update of the user's trampoline pointer (before EPT activation!)
+    //
+    if (OutTrampoline != NULL)
+    {
+        *OutTrampoline = Hook->Trampoline;  // Update the user's pointer
+        SimpleHvLog("[EptHookInstructionMemory] Atomic update: *OutTrampoline = 0x%llx", Hook->Trampoline);
+
+        //
+        // Memory barrier to ensure visibility across all cores
+        //
+        MemoryBarrier();
+    }
 
     //
     //
@@ -1305,7 +1320,8 @@ EptHookPerformPageHookMonitorAndInlineHook(VIRTUAL_MACHINE_STATE * VCpu,
         //
         // Create Hook
         //
-        if (!EptHookInstructionMemory(HookedPage, ProcessCr3, TargetAddress, (PVOID)TargetAddressInSafeMemory, HookFunction))
+        PVOID * OutTrampoline = ((EPT_HOOKS_ADDRESS_DETAILS_FOR_EPTHOOK2 *)HookingDetails)->OutTrampoline;
+        if (!EptHookInstructionMemory(HookedPage, ProcessCr3, TargetAddress, (PVOID)TargetAddressInSafeMemory, HookFunction, OutTrampoline))
         {
             PoolManagerFreePool((UINT64)HookedPage);
 
@@ -1643,6 +1659,7 @@ EptHookInlineHook(VIRTUAL_MACHINE_STATE * VCpu,
     //
     HookingDetail.TargetAddress = TargetAddress;
     HookingDetail.HookFunction  = HookFunction;
+    HookingDetail.OutTrampoline = OutTrampoline;
 
     BOOLEAN Result = EptHookPerformMemoryOrInlineHook(VCpu,
                                                        &HookingDetail,
@@ -1652,54 +1669,12 @@ EptHookInlineHook(VIRTUAL_MACHINE_STATE * VCpu,
                                                        FALSE);
 
     //
-    // If hook was successful and caller wants the trampoline address
+    // Trampoline address is now updated atomically in VMX root mode
+    // No need for searching the linked list anymore
     //
     if (Result && OutTrampoline != NULL)
     {
-        //
-        // Initialize output to NULL
-        //
-        *OutTrampoline = NULL;
-
-        //
-        // Iterate through the list of hooked pages to find the trampoline
-        //
-        PLIST_ENTRY TempList = &g_EptHook2sDetourListHead;
-        BOOLEAN     Found    = FALSE;
-
-        while (&g_EptHook2sDetourListHead != TempList->Flink)
-        {
-            TempList                                          = TempList->Flink;
-            PHIDDEN_HOOKS_DETOUR_DETAILS CurrentHookedDetails = CONTAINING_RECORD(TempList, HIDDEN_HOOKS_DETOUR_DETAILS, OtherHooksList);
-
-            SimpleHvLog("[EptHookInlineHook] Checking: HookedAddr=0x%llx, TargetAddr=0x%llx, Trampoline=0x%llx",
-                        CurrentHookedDetails->HookedFunctionAddress,
-                        TargetAddress,
-                        CurrentHookedDetails->ReturnAddress);
-
-            if (CurrentHookedDetails->HookedFunctionAddress == TargetAddress)
-            {
-                *OutTrampoline = CurrentHookedDetails->ReturnAddress;
-                Found          = TRUE;
-                SimpleHvLog("[EptHookInlineHook] SUCCESS: Found trampoline at 0x%llx for target 0x%llx",
-                            *OutTrampoline,
-                            TargetAddress);
-                break;
-            }
-        }
-
-        if (!Found)
-        {
-            SimpleHvLogError("[EptHookInlineHook] ERROR: Failed to find trampoline for target 0x%llx", TargetAddress);
-            SimpleHvLogError("[EptHookInlineHook] List head at: 0x%llx", &g_EptHook2sDetourListHead);
-            return FALSE;  // Hook succeeded but trampoline not found - this is an error
-        }
-
-        //
-        // Use memory barrier to ensure trampoline address is visible to all cores
-        //
-        MemoryBarrier();
-        SimpleHvLog("[EptHookInlineHook] Trampoline address synchronized across all cores");
+        SimpleHvLog("[EptHookInlineHook] Hook installed successfully with atomic trampoline update");
     }
 
     return Result;

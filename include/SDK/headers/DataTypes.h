@@ -363,6 +363,7 @@ typedef struct _EPT_HOOKS_ADDRESS_DETAILS_FOR_EPTHOOK2
 {
     PVOID TargetAddress;
     PVOID HookFunction;
+    PVOID * OutTrampoline; // Pointer for atomic update
 
 } EPT_HOOKS_ADDRESS_DETAILS_FOR_EPTHOOK2, *PEPT_HOOKS_ADDRESS_DETAILS_FOR_EPTHOOK2;
 

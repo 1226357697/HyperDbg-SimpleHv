@@ -55,8 +55,7 @@ PCWCH protected_process_list[] = {
 	L"HyperCE",
 	L"x64dbg",
 	L"x32dbg",
-	L"ida",
-	L"windbg"
+	L"ida"
 };
 
 // ANSI 版本的保护进程列表（用于 IsProtectedProcessA）
@@ -65,8 +64,7 @@ PCSZ protected_process_list_a[] = {
 	"HyperCE",
 	"x64dbg",
 	"x32dbg",
-	"ida",
-	"windbg"
+	"ida"
 };
 
 // ========================================
@@ -319,7 +317,7 @@ NTSTATUS InstallTestHooks(VOID)
 	                           pObpReferenceObjectByHandleWithTag,
 	                           (PVOID)ObpReferenceObjectByHandleWithTagHook,
 	                           (UINT32)(ULONG_PTR)PsGetCurrentProcessId(),
-	                           (PVOID*)&old_ObpReferenceObjectByHandleWithTag);
+	                           (PVOID *)&old_ObpReferenceObjectByHandleWithTag);
 	if (result) {
 		SimpleHvLog("[Test] Hook 1 installed: ObpReferenceObjectByHandleWithTag");
 		SimpleHvLog("[Test] Trampoline address: 0x%llx", old_ObpReferenceObjectByHandleWithTag);
@@ -363,7 +361,7 @@ NTSTATUS InstallTestHooks(VOID)
 	                            pNtQuerySystemInformation,
 	                            (PVOID)NtQuerySystemInformationHook,
 	                            HANDLE_TO_UINT32(PsGetCurrentProcessId()),
-	                            (PVOID*)&old_NtQuerySystemInformation);
+	                            (PVOID **)&old_NtQuerySystemInformation);
 	if (result) {
 		SimpleHvLog("[Test] Hook 2 installed: NtQuerySystemInformation");
 		SimpleHvLog("[Test] Trampoline address: 0x%llx", old_NtQuerySystemInformation);
